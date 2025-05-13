@@ -1,23 +1,39 @@
-# utils/groq_client.py
 import os
 import requests
 from utils.emotion_classifier import classify_emotion
 from utils.safety import detect_crisis
 
-def query_groq(user_input):
+def query_groq(user_input, conversation_history=None):
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     emotion = classify_emotion(user_input)
     
     # Check for crisis
     is_crisis, resource_message = detect_crisis(user_input)
     
-    # Adjust prompt based on emotion and crisis status
+    # Adjust prompt based on emotion with coping strategies
     prompt_style = {
-        "Sad 😢": "Be deeply comforting, validate their pain, and suggest grounding techniques like the 5-4-3-2-1 method.",
-        "Angry 😠": "Use calm, de-escalating language and suggest journaling to process emotions.",
-        "Anxious 😰": "Be reassuring, offer breathing exercises, and emphasize safety.",
-        "Positive 🙂": "Reflect their positivity and encourage self-care practices.",
-        "Neutral 😐": "Stay attentive, empathetic, and gently explore their feelings."
+        "Sadness 😢": (
+            "Be deeply comforting and validate their pain. Suggest the 5-4-3-2-1 grounding technique: "
+            "name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste."
+        ),
+        "Anger 😠": (
+            "Use calm, de-escalating language. Suggest journaling: write down what’s upsetting you, "
+            "then list one actionable step to address it."
+        ),
+        "Anxiety 😰": (
+            "Be reassuring and emphasize safety. Suggest box breathing: inhale for 4 seconds, hold for 4, "
+            "exhale for 4, hold for 4, repeat 4 times."
+        ),
+        "Happiness 🙂": (
+            "Reflect their positivity and encourage self-care, like taking a moment to savor something they enjoy."
+        ),
+        "Gratitude 🙏": (
+            "Celebrate their gratitude and suggest writing down three things they’re thankful for today."
+        ),
+        "Neutral 😐": (
+            "Stay attentive, empathetic, and gently explore their feelings. Suggest a mindfulness exercise: "
+            "focus on your breath for 30 seconds."
+        )
     }
     
     prompt_prefix = prompt_style.get(emotion, "Be kind and attentive.")
@@ -28,6 +44,13 @@ def query_groq(user_input):
             "and gently encourage seeking professional help. Include this resource: " + resource_message
         )
     
+    # Include conversation history if available
+    history_prompt = ""
+    if conversation_history:
+        history_prompt = "Previous conversation context:\n" + "\n".join(
+            [f"User: {msg['user']}\nAssistant: {msg['assistant']}" for msg in conversation_history]
+        ) + "\n\n"
+    
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
@@ -35,8 +58,9 @@ def query_groq(user_input):
     
     system_prompt = (
         f"You are a compassionate mental health companion. {prompt_prefix} "
-        "Never diagnose or give medical advice. If appropriate, suggest coping strategies "
-        "like mindfulness, journaling, or breathing exercises. Always maintain a warm, non-judgmental tone."
+        "Never diagnose or give medical advice. Respond in a warm, non-judgmental tone, "
+        "mirroring the user’s emotional state. If appropriate, weave in the suggested coping strategy naturally. "
+        f"{history_prompt}Current user message:"
     )
     
     payload = {
