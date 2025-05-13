@@ -1,0 +1,6 @@
+# requirements.txt
+streamlit
+python-dotenv
+requests
+transformers
+torch  # Required for transformers
