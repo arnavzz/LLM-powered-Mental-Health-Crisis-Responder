@@ -1,9 +1,5 @@
-# utils/safety.py
 import re
-from transformers import pipeline
-
-# Load a pre-trained intent classifier from Hugging Face
-crisis_classifier = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
+from textblob import TextBlob
 
 # High-risk keywords and patterns
 CRISIS_PATTERNS = [
@@ -21,7 +17,7 @@ CRISIS_RESOURCES = {
 
 def detect_crisis(text):
     """
-    Detects high-risk phrases or intent in user input.
+    Detects high-risk phrases or negative sentiment in user input.
     Returns: (is_crisis: bool, resource_message: str)
     """
     text = text.lower()
@@ -31,9 +27,9 @@ def detect_crisis(text):
         if re.search(pattern, text):
             return True, select_resource("Default")
     
-    # Transformer-based intent classification
-    result = crisis_classifier(text)
-    if result[0]["label"] == "NEGATIVE" and result[0]["score"] > 0.9:
+    # TextBlob sentiment analysis
+    blob = TextBlob(text)
+    if blob.sentiment.polarity < -0.5:  # Strongly negative sentiment
         return True, select_resource("Default")
     
     return False, ""
