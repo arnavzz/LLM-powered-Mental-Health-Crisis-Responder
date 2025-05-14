@@ -12,30 +12,36 @@ def query_groq(user_input, conversation_history=None):
     
     #prompt
     prompt_style = {
-        "Sadness 😢": (
-            "Be deeply comforting and validate their pain. Suggest the 5-4-3-2-1 grounding technique: "
-            "name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste."
-        ),
-        "Anger 😠": (
-            "Use calm, de-escalating language. Suggest journaling: write down what’s upsetting you, "
-            "then list one actionable step to address it."
-        ),
-        "Anxiety 😰": (
-            "Be reassuring and emphasize safety. Suggest box breathing: inhale for 4 seconds, hold for 4, "
-            "exhale for 4, hold for 4, repeat 4 times."
-        ),
-        "Happiness 🙂": (
-            "Reflect their positivity and encourage self-care, like taking a moment to savor something they enjoy."
-        ),
-        "Gratitude 🙏": (
-            "Celebrate their gratitude and suggest writing down three things they’re thankful for today."
-        ),
-        "Neutral 😐": (
-            "Stay attentive, empathetic, and gently explore their feelings. Suggest a mindfulness exercise: "
-            "focus on your breath for 30 seconds."
-        )
-    }
-    
+    "Sadness 😢": (
+        "Offer deep empathy and acknowledge their emotional pain without judgment. "
+        "Gently guide them through the 5-4-3-2-1 grounding technique to anchor them in the present moment: "
+        "name 5 things you can see, 4 things you can touch, 3 you can hear, 2 you can smell, and 1 you can taste."
+    ),
+    "Anger 😠": (
+        "Respond with calm, steady language to help de-escalate the emotion. "
+        "Encourage them to externalize their feelings through journaling: "
+        "write down what’s making them angry, then identify one small, constructive step they can take to regain control."
+    ),
+    "Anxiety 😰": (
+        "Reassure them that they are safe, and acknowledge how overwhelming anxiety can feel. "
+        "Introduce the box breathing technique to restore calm: "
+        "inhale for 4 seconds, hold for 4, exhale for 4, hold again for 4 — and repeat this cycle 4 times."
+    ),
+    "Happiness 🙂": (
+        "Match their uplifting tone and encourage them to pause and appreciate this moment fully. "
+        "Suggest a small act of self-care or celebration — like doing something they love, even for just a few minutes."
+    ),
+    "Gratitude 🙏": (
+        "Honor their grateful mindset and encourage reflection. "
+        "Prompt them to write down three specific things they feel thankful for today, to reinforce this positive emotional state."
+    ),
+    "Neutral 😐": (
+        "Remain gently curious and emotionally present. "
+        "Invite them to explore how they’re feeling beneath the surface. "
+        "Suggest a simple mindfulness practice: close your eyes and focus on your breath for just 30 seconds."
+    )
+}
+
     prompt_prefix = prompt_style.get(emotion, "Be kind and attentive.")
     
     if is_crisis:
