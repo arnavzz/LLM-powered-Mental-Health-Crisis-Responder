@@ -7,10 +7,10 @@ def query_groq(user_input, conversation_history=None):
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     emotion = classify_emotion(user_input)
     
-    # Check for crisis
+    
     is_crisis, resource_message = detect_crisis(user_input)
     
-    # Adjust prompt based on emotion with coping strategies
+    #prompt
     prompt_style = {
         "Sadness 😢": (
             "Be deeply comforting and validate their pain. Suggest the 5-4-3-2-1 grounding technique: "
@@ -44,7 +44,7 @@ def query_groq(user_input, conversation_history=None):
             "and gently encourage seeking professional help. Include this resource: " + resource_message
         )
     
-    # Include conversation history if available
+    # Include conversation
     history_prompt = ""
     if conversation_history:
         history_prompt = "Previous conversation context:\n" + "\n".join(
